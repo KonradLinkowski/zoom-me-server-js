@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>App</title>
+  </head>
+  <body>
+    <form action="./photos" method="POST" enctype="multipart/form-data">
+      <select name="frame" id="frame">
+      {{#each frames}}
+        <option value="{{this.frameId}}">{{ this.name }}</option>
+      {{/each}}
+      </select>
+      <input type="file" name="photo" id="photo">
+      <button type="submit">Send</button>
+    </form>
+  </body>
+</html>
