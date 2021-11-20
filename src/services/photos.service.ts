@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, MoreThan } from 'typeorm';
 import { CreatePhoto, Photo } from '../data/photo.entity';
 import { FileUploadService } from './file-upload.service';
 import { v4 as uuid } from 'uuid';
@@ -19,6 +19,10 @@ export class PhotosService {
     return this.photosRepository.find();
   }
 
+  findByFrame(frame: number, since: string): Promise<Photo[]> {
+    return this.photosRepository.find({ where: { frame, date: MoreThan(since) } });
+  }
+
   findOne(id: string): Promise<Photo> {
     return this.photosRepository.findOne(id);
   }
@@ -28,7 +32,7 @@ export class PhotosService {
   }
 
   async create(photo: CreatePhoto): Promise<void> {
-    const fileName = join(uuid(), extname(photo.file.originalname));
+    const fileName = uuid() + extname(photo.file.originalname);
     const path = join(photo.frame, fileName);
     await this.fileUploadService.uploadFile(photo.file.buffer, path);
     await this.photosRepository.insert({

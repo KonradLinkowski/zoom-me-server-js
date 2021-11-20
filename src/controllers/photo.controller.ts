@@ -10,6 +10,7 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport/dist/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -24,6 +25,19 @@ export class PhotoController {
   @UseGuards(AuthGuard('basic'))
   getPhotos() {
     return this.photosService.findAll();
+  }
+
+  @Get('frame/:frame')
+  @UseGuards(AuthGuard('basic'))
+  async getFramePhotosIds(
+    @Param() frameId: number,
+    @Query('since') since: string,
+  ) {
+    const photos = await this.photosService.findByFrame(frameId, since);
+    console.log(photos);
+    const string = photos.map(photo => photo.id).join('\n');
+    console.log(string);
+    return string;
   }
 
   @Get(':id')
