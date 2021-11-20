@@ -30,19 +30,17 @@ export class PhotoController {
   @Get('frame/:frame')
   @UseGuards(AuthGuard('basic'))
   async getFramePhotosIds(
-    @Param() frameId: number,
+    @Param('frame') frameId: number,
     @Query('since') since: string,
   ) {
     const photos = await this.photosService.findByFrame(frameId, since);
-    console.log(photos);
     const string = photos.map(photo => photo.id).join('\n');
-    console.log(string);
     return string;
   }
 
   @Get(':id')
   @UseGuards(AuthGuard('basic'))
-  async downloadPhoto(@Param() id: string, @Res({ passthrough: true }) res) {
+  async downloadPhoto(@Param('id') id: string, @Res({ passthrough: true }) res) {
     const photo = await this.photosService.findOne(id);
     const readStream = await this.photosService.download(photo.path);
     res.set({
